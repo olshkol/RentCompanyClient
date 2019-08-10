@@ -5,7 +5,7 @@ import java.util.HashMap;
 
 import static application.RentCompanyClientApp.inputOutput;
 import static application.RentCompanyClientApp.tcpClient;
-import static cars.routing.Routing.*;
+import static cars.routing.RoutingPath.*;
 
 public class Utils {
     public static final int MIN_BIRTH_YEAR_DRIVER = 1940;

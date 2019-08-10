@@ -1,8 +1,9 @@
 package cars.menu;
 
 import application.TCPClient;
-import cars.dto.Request;
-import cars.dto.Response;
+import cars.Package;
+import cars.Request;
+import cars.Response;
 import cars.io.InputOutput;
 
 import java.util.ArrayList;
@@ -27,25 +28,21 @@ public class RentCompanyItem implements Item {
 
     @Override
     public void perform() {
-        Response response = tcpClient.exchangeData(new Request(nameItem, null));
+        Response response = tcpClient.exchangeData(new Request(nameItem));
 
-        ArrayList<Class> paramsClasses = response.getParamsClasses();
-        ArrayList<ArrayList<Class>> compositeParamsClasses = response.getCompositeParamsClasses();
-        ArrayList<ArrayList<String>> compositeParamsNames = response.getCompositeParamsNames();
-        ArrayList<ArrayList<Object>> compositeParams = new ArrayList<>();
+        Package receivedPackage = response.getPackage();
 
-        for (int i = 0; i < paramsClasses.size(); i++) {
-            compositeParams.add(new ArrayList<>());
-            for (int j = 0; j < compositeParamsClasses.get(i).size(); j++) {
-                Object data = inputOutput.input(MESSAGES.get(compositeParamsNames.get(i).get(j)), compositeParamsClasses.get(i).get(j));
+        for (int i = 0; i < receivedPackage.paramsClassesSize(); i++) {
+            receivedPackage.getCompositeParams().add(new ArrayList<>());
+            for (int j = 0; j < receivedPackage.getCompositeParamsClasses().get(i).size(); j++) {
+                Object data = inputOutput.input(
+                        MESSAGES.get(receivedPackage.getCompositeParamsNames().get(i).get(j)),
+                        receivedPackage.getCompositeParamsClasses().get(i).get(j));
                 if (data == null) return;
-                compositeParams.get(i).add(data);
+                receivedPackage.getCompositeParams().get(i).add(data);
             }
         }
-        response.setCompositeParamsClasses(null);
-        response.setParamsClasses(null);
-        Request request = new Request(nameItem, paramsClasses, compositeParamsClasses, compositeParams);
-        request.setBody(new Boolean(true)); //some
+        Request request = new Request(nameItem, receivedPackage);
         response = tcpClient.exchangeData(request);
         inputOutput.outputLine(response);
     }

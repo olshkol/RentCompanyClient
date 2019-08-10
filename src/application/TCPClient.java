@@ -1,7 +1,7 @@
 package application;
 
-import cars.dto.Request;
-import cars.dto.Response;
+import cars.Request;
+import cars.Response;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
